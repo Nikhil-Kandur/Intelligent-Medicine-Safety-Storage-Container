@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f6f8f7">
+<title>MedBox · Storage</title>
+<style>
+:root{--bg:#f5f7f6;--paper:#fff;--ink:#172522;--muted:#788782;--line:#e5ebe8;--green:#116b5b;--green2:#0d5549;--mint:#e9f5f1;--ok:#237a52;--warn:#a66a16;--red:#b84949;--shadow:0 10px 30px rgba(23,37,34,.045)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.45}
+button,input,select{font:inherit}
+button{border:0;cursor:pointer;transition:background .16s,transform .16s,opacity .16s}
+button:disabled{opacity:.55;cursor:wait}
+.top{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topin{max-width:1120px;margin:auto;padding:15px 24px;display:flex;align-items:center;gap:14px}
+.brandmark{width:38px;height:38px;border-radius:12px;background:var(--mint);display:grid;place-items:center;color:var(--green);font-size:21px;font-weight:800}
+.brand{font-size:19px;font-weight:780;letter-spacing:-.04em}
+.tagline{font-size:12px;color:var(--muted);margin-top:1px}
+.grow{flex:1}
+.connection{display:flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid var(--line);border-radius:30px;font-size:12px;color:var(--muted);background:#fff}
+.dot{width:7px;height:7px;border-radius:50%;background:#b5c1bc}.connection.on .dot{background:#269764;box-shadow:0 0 0 3px #2697641b}.connection.off .dot{background:#c75a5a;box-shadow:0 0 0 3px #c75a5a1b}
+.btn{border-radius:11px;padding:10px 15px;font-weight:680;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.primary{background:var(--green);color:#fff}.btn.primary:hover{background:var(--green2)}
+.btn.soft{background:var(--mint);color:var(--green)}.btn.soft:hover{background:#dcefe8}
+.btn.ghost{background:#f1f4f2;color:#41534d}.btn.ghost:hover{background:#e8eeeb}
+.btn.danger{background:#fff0ef;color:var(--red)}
+.btn.small{padding:7px 10px;font-size:12px;border-radius:9px}
+main{max-width:1120px;margin:0 auto;padding:28px 24px 54px}
+.intro{display:flex;align-items:flex-end;gap:18px;margin-bottom:21px}
+.kicker{color:var(--green);font-size:11px;text-transform:uppercase;letter-spacing:.13em;font-weight:780;margin-bottom:7px}
+h1{font-size:clamp(25px,4vw,34px);letter-spacing:-.055em;line-height:1.05;margin:0;font-weight:780}
+.lead{margin:8px 0 0;color:var(--muted);font-size:13px}.muted{color:var(--muted)}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}
+.section-title h2{font-size:15px;letter-spacing:-.02em;margin:0;font-weight:750}
+.section-title span{font-size:12px;color:var(--muted)}
+.shelves{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.shelf{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:19px 20px 14px;box-shadow:var(--shadow);min-width:0}
+.shelfhead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.shelfname{display:flex;align-items:center;gap:9px;font-weight:730;font-size:13px}
+.shelficon{width:30px;height:30px;border-radius:10px;background:#f0f5f2;color:var(--green);display:grid;place-items:center;font-size:16px}
+.pill{font-size:10px;font-weight:760;letter-spacing:.04em;text-transform:uppercase;border-radius:20px;padding:5px 8px;background:#f1f4f2;color:var(--muted)}
+.pill.good{background:#e9f5ef;color:var(--ok)}.pill.pending{background:#fff5e5;color:var(--warn)}.pill.bad{background:#fff0ef;color:var(--red)}
+.weightline{display:flex;align-items:baseline;gap:6px;margin:20px 0 4px}
+.weight{font-size:36px;line-height:1;font-weight:780;letter-spacing:-.06em;font-variant-numeric:tabular-nums}
+.unit{color:var(--muted);font-size:14px;font-weight:600}
+.weightnote{font-size:11px;color:var(--muted);min-height:17px}
+.meter{height:5px;border-radius:10px;background:#edf1ef;margin:13px 0 17px;overflow:hidden}.meter span{height:100%;display:block;width:0;background:linear-gradient(90deg,#72b49b,var(--green));border-radius:10px;transition:width .4s}
+.items{border-top:1px solid var(--line)}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #edf1ef}
+.item:last-child{border-bottom:0}
+.itemname{font-size:13px;font-weight:720;overflow-wrap:anywhere}
+.itemmeta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:4px}
+.itemweight,.itemtime{font-size:11px;color:var(--muted)}
+.itemstate{font-size:10px;font-weight:700;padding:3px 7px;border-radius:12px;background:#e9f5ef;color:var(--ok)}.itemstate.wait{background:#fff5e5;color:var(--warn)}
+.itemactions{display:flex;gap:5px;align-items:center}
+.iconbtn{width:30px;height:30px;border-radius:9px;background:#f3f6f4;color:#4a5c55;font-size:14px}.iconbtn:hover{background:#e8efeb}.iconbtn.del{color:var(--red)}
+.empty{padding:18px 4px;text-align:center;color:var(--muted);font-size:12px}
+.bottomgrid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px;margin-top:17px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:17px 19px;box-shadow:var(--shadow);min-width:0}
+.envgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.env{padding:12px;border-radius:12px;background:#f7f9f8}
+.envlabel{font-size:11px;color:var(--muted)}.envvalue{font-size:21px;font-weight:760;letter-spacing:-.04em;margin-top:3px;font-variant-numeric:tabular-nums}.envunit{font-size:11px;color:var(--muted);font-weight:600}
+.reminder{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #edf1ef}.reminder:last-child{border-bottom:0}.remindtime{font-size:12px;font-weight:760;color:var(--green);min-width:48px}.remindname{font-size:12px;font-weight:660;flex:1}.remindtaken{font-size:10px;color:var(--muted)}
+.alert{display:none;margin:0 0 16px;border:1px solid #f0d9b7;background:#fff9ed;color:#835815;border-radius:13px;padding:12px 14px;font-size:12px}.alert.show{display:block}
+.results{display:none;margin-top:16px;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:#fff}.results.show{display:block}.results h3{font-size:13px;margin:0 0 8px}.resultline{font-size:12px;color:#4b5a55;margin:6px 0}.match{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:12px}.match button{white-space:nowrap}
+.setup{margin-top:17px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:0 17px;box-shadow:var(--shadow)}
+.setup summary{cursor:pointer;list-style:none;padding:14px 0;font-size:12px;font-weight:700;color:#4d5e57;display:flex;align-items:center;justify-content:space-between}.setup summary::-webkit-details-marker{display:none}.setup summary:after{content:'＋';font-size:17px;color:var(--green)}.setup[open] summary:after{content:'−'}
+.setupbody{padding:2px 0 15px}.setupdesc{color:var(--muted);font-size:11px;margin:0 0 13px}.calrow{display:grid;grid-template-columns:1fr 1fr;gap:14px}.calbox{border:1px solid var(--line);border-radius:12px;padding:12px}.calbox strong{font-size:12px}.calcontrols{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:9px}.calcontrols input{width:100px}
+input,select{width:100%;border:1px solid #dce5e0;background:#fff;border-radius:10px;padding:10px 11px;color:var(--ink);outline:none}input:focus,select:focus{border-color:#67a994;box-shadow:0 0 0 3px #2a96751b}
+label{display:block;font-size:11px;color:#5e7069;font-weight:650;margin:0 0 6px}
+.modalback{position:fixed;inset:0;z-index:10;background:#12251f70;display:none;align-items:center;justify-content:center;padding:18px}.modalback.show{display:flex}
+.modal{width:min(100%,470px);background:#fff;border-radius:19px;padding:23px;box-shadow:0 22px 80px #0003;animation:pop .16s ease-out}@keyframes pop{from{transform:translateY(8px);opacity:.7}to{transform:none;opacity:1}}
+.modalhead{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px}.modalhead h2{font-size:19px;margin:0;letter-spacing:-.04em}.modalhead p{font-size:12px;color:var(--muted);margin:4px 0 0}.close{margin-left:auto;width:30px;height:30px;border-radius:9px;background:#f1f5f2;color:#52645c;font-size:18px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field.full{grid-column:1/-1}.modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+.timeRows{display:grid;gap:8px}.timerow{display:flex;gap:8px;align-items:center}.timerow input{max-width:190px}.timerow .iconbtn{flex:0 0 32px}.timehelp{font-size:11px;color:var(--muted);margin:2px 0 8px}.calcontrols input{min-width:110px}.panel .section-title .btn{white-space:nowrap}
+.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,12px);opacity:0;pointer-events:none;z-index:20;background:#17352e;color:#fff;padding:11px 16px;border-radius:12px;font-size:12px;box-shadow:0 8px 30px #0002;transition:.2s;max-width:90vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.toast.bad{background:#9e3737}
+.foot{font-size:10px;color:#93a19b;margin-top:18px;text-align:center}
+@media(max-width:760px){main{padding:22px 15px 40px}.topin{padding:12px 15px}.shelves{grid-template-columns:1fr}.bottomgrid{grid-template-columns:1fr}.intro{align-items:flex-start}.intro .grow{display:none}.intro{flex-wrap:wrap}.calrow{grid-template-columns:1fr}.envvalue{font-size:19px}}
+@media(max-width:420px){.connection{font-size:0;padding:9px}.connection .dot{width:8px;height:8px}.topin{gap:9px}.brand{font-size:17px}.topin .btn{padding:9px 10px}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.intro h1{font-size:27px}.weight{font-size:32px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="topin">
+  <div class="brandmark">M</div>
+  <div><div class="brand">MedBox</div><div class="tagline">Your medicine storage, at a glance</div></div>
+  <div class="grow"></div>
+  <div id="connection" class="connection off"><span class="dot"></span><span id="connectionText">Connecting to box</span></div>
+  <button id="reloadTop" class="btn soft" title="Read both shelves and check for changes">↻ <span>Reload</span></button>
+</div></header>
+<main>
+  <div id="offlineAlert" class="alert">The ESP32 is not connected over USB. Check the cable and make sure Arduino Serial Monitor is closed.</div>
+  <div class="intro">
+    <div><div class="kicker">Storage overview</div><h1>Your storage</h1><p class="lead">See what is inside, check shelf weights and keep track of what has been taken.</p></div>
+    <div class="grow"></div>
+    <button id="addOpen" class="btn primary">＋ Add item</button>
+  </div>
+  <div class="section-title"><h2>Storage shelves</h2><span id="lastUpdated">Waiting for first reading</span></div>
+  <div id="shelves" class="shelves"></div>
+  <div id="results" class="results" aria-live="polite"></div>
+  <details class="setup" id="setup">
+    <summary>Scale setup <span class="muted">· one-time calibration</span></summary>
+    <div class="setupbody">
+      <p class="setupdesc">Calibrate each shelf separately. Empty the shelf and press Tare, then place a known weight (for example 500 g), enter its exact weight and press Calibrate.</p>
+      <div class="calrow" id="calibration"></div>
+    </div>
+  </details>
+  <div class="bottomgrid">
+    <section class="panel">
+      <div class="section-title"><h2>Storage conditions</h2><span>Live sensor readings</span></div>
+      <div id="environment" class="envgrid"></div>
+      <p class="foot" style="text-align:left;margin-bottom:0">DHT11 readings are approximate and intended for demonstration. Always follow the storage instructions on each medicine's label.</p>
+    </section>
+    <section class="panel">
+      <div class="section-title"><h2>Ingestion reminders</h2><button id="addIngestion" class="btn small soft">＋ Add ingestion</button></div>
+      <div id="reminders"><div class="empty">No reminders added yet.</div></div>
+    </section>
+  </div>
+  <p class="foot">Local demo · Data stays on this laptop · USB connection to ESP32</p>
+</main>
+
+<div id="itemModal" class="modalback" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <form id="itemForm" class="modal">
+    <div class="modalhead"><div><h2 id="modalTitle">Add an item</h2><p>Enter the medicine pack or container as one item.</p></div><button type="button" id="modalClose" class="close" aria-label="Close">×</button></div>
+    <div class="formgrid">
+      <div class="field full"><label for="itemName">Medicine / item name</label><input id="itemName" maxlength="40" placeholder="e.g. Paracetamol syrup" required></div>
+      <div class="field"><label for="itemShelf">Store on</label><select id="itemShelf"><option value="1">Shelf 1</option><option value="2">Shelf 2</option></select></div>
+      <div class="field"><label for="itemWeight">Full pack weight (g)</label><input id="itemWeight" type="number" min="0.1" max="20000" step="0.1" placeholder="e.g. 125" required></div>
+      <div class="field full"><label>Ingestion times (optional)</label><div id="itemTimes" class="timeRows"></div><button type="button" id="addItemTime" class="btn small ghost" style="margin-top:8px">＋ Add ingestion time</button><div class="timehelp">Add one or more times. You can also add reminders later from the home screen. Reminders are sent to the OLED.</div></div>
+    </div>
+    <div class="modalfoot"><button type="button" id="modalCancel" class="btn ghost">Cancel</button><button type="submit" id="itemSave" class="btn primary">Add to storage</button></div>
+  </form>
+</div>
+<div id="reminderModal" class="modalback" role="dialog" aria-modal="true" aria-labelledby="reminderTitle">
+  <form id="reminderForm" class="modal">
+    <div class="modalhead"><div><h2 id="reminderTitle">Add ingestion time</h2><p>Choose an item and set another reminder.</p></div><button type="button" id="reminderClose" class="close" aria-label="Close">×</button></div>
+    <div class="formgrid">
+      <div class="field full"><label for="reminderItem">Item</label><select id="reminderItem" required></select></div>
+      <div class="field full"><label for="reminderTime">Ingestion time</label><input id="reminderTime" type="time" required></div>
+    </div>
+    <div class="modalfoot"><button type="button" id="reminderCancel" class="btn ghost">Cancel</button><button type="submit" id="reminderSave" class="btn primary">Add reminder</button></div>
+  </form>
+</div>
+<div id="toast" class="toast" role="status"></div>
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = (v,d=1) => v == null || !Number.isFinite(Number(v)) ? '—' : Number(v).toFixed(d);
+let state = null, editingId = null, pollTimer = null, toastTimer = null, busy = false;
+
+async function api(path, method='GET', body) {
+  const res = await fetch(path, {method, headers:{'Content-Type':'application/json'}, body:body === undefined ? undefined : JSON.stringify(body)});
+  let data = {}; try { data = await res.json(); } catch (_) {}
+  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  return data;
+}
+function toast(message, bad=false) {
+  const el = $('#toast'); el.textContent = message; el.className = 'toast show' + (bad ? ' bad' : '');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.className='toast', 3600);
+}
+function remindersFor(id) { return (state?.schedule || []).filter(x => Number(x.medicineId) === Number(id)); }
+function reminderFor(id) { return remindersFor(id)[0] || null; }
+function shelfItems(shelf) { return (state?.medicines || []).filter(x => Number(x.shelf) === shelf); }
+function renderShelf(shelf) {
+  const d = state.device || {}, r = state.readings || {};
+  const hx = Boolean(d['hx'+shelf]), calibrated = Boolean(d['c'+shelf]);
+  const weight = r['w'+shelf];
+  const items = shelfItems(shelf);
+  const present = items.filter(x => Number(x.qty || 0) > 0).length;
+  const status = !d.online ? ['bad','OFFLINE'] : !hx ? ['bad','NO SENSOR'] : !calibrated ? ['pending','CALIBRATE'] : ['good','LIVE'];
+  const list = items.length ? items.map(m => {
+    const rems = remindersFor(m.id), isPresent = Number(m.qty || 0) > 0;
+    const timesLabel = rems.length ? `◷ ${rems.map(x=>esc(x.time)).join(' · ')}` : '';
+    return `<div class="item"><div><div class="itemname">${esc(m.name)}</div><div class="itemmeta"><span class="itemweight">${m.unitWeight == null ? 'Weight missing' : esc(num(m.unitWeight,1)+' g')}</span><span class="itemstate ${isPresent?'':'wait'}">${isPresent?'Stored':'Not detected'}</span>${timesLabel?`<span class="itemtime">${timesLabel}</span>`:''}</div></div><div class="itemactions"><button class="iconbtn" title="Edit ingestion times" data-time="${m.id}">◷</button><button class="iconbtn" title="Edit item" data-edit="${m.id}">✎</button><button class="iconbtn del" title="Remove item" data-delete="${m.id}">×</button></div></div>`;
+  }).join('') : `<div class="empty">No items added to this shelf yet.</div>`;
+  const ratio = weight == null ? 0 : Math.max(0, Math.min(100, Number(weight) / 1000 * 100));
+  return `<article class="shelf"><div class="shelfhead"><div class="shelfname"><span class="shelficon">▤</span> Shelf ${shelf}</div><span class="pill ${status[0]}">${status[1]}</span></div><div class="weightline"><span class="weight">${esc(num(weight,1))}</span><span class="unit">g</span></div><div class="weightnote">${weight==null?'Calibrate the load cell to read weight':`Live shelf weight · ${present} of ${items.length} registered item(s) stored`}</div><div class="meter"><span style="width:${ratio}%"></span></div><div class="items">${list}</div></article>`;
+}
+function renderEnvironment() {
+  const r=state.readings||{}, m=state.mkt||{};
+  $('#environment').innerHTML = [
+    ['Temperature',num(r.temp,1),'°C'],['Humidity',num(r.hum,0),'% RH'],['MKT',num(m.value,2),'°C']
+  ].map(x=>`<div class="env"><div class="envlabel">${x[0]}</div><div class="envvalue">${x[1]} <span class="envunit">${x[2]}</span></div></div>`).join('');
+}
+function renderReminders() {
+  const items = [...(state.schedule||[])].sort((a,b)=>String(a.time).localeCompare(String(b.time)));
+  if (!items.length) { $('#reminders').innerHTML='<div class="empty">No ingestion times yet. Press ＋ Add ingestion to create one.</div>'; return; }
+  $('#reminders').innerHTML = items.map(x=>`<div class="reminder"><span class="remindtime">${esc(x.time)}</span><span class="remindname">${esc(x.label)}</span>${x.taken?'<span class="remindtaken">Taken today</span>':`<button class="btn small soft" data-taken="${x.id}">Taken</button>`}<button class="iconbtn del" title="Remove reminder" data-remove-reminder="${x.id}">×</button></div>`).join('');
+}
+function initCalibration() {
+  // Build the form controls once. Polling updates only the status text below,
+  // so partially typed calibration numbers are never destroyed by telemetry refreshes.
+  $('#calibration').innerHTML = [1,2].map(s=>`<div class="calbox"><strong>Shelf ${s} · <span id="calStatus${s}">Not calibrated</span></strong><div class="calcontrols"><button type="button" class="btn small ghost" data-tare="${s}">Tare empty shelf</button><input id="calWeight${s}" type="number" min="5" step="0.1" inputmode="decimal" autocomplete="off" placeholder="Known g"><button type="button" class="btn small soft" data-cal="${s}">Calibrate</button></div></div>`).join('');
+}
+function renderCalibration() {
+  const d=state.device||{};
+  [1,2].forEach(s=>{const el=$('#calStatus'+s);if(el)el.textContent=d['c'+s]?'Calibrated':'Not calibrated';});
+}
+function addItemTimeRow(value='') {
+  const row=document.createElement('div');row.className='timerow';
+  const input=document.createElement('input');input.type='time';input.required=true;input.setAttribute('aria-label','Ingestion time');input.dataset.itemTime='1';input.value=value;
+  const remove=document.createElement('button');remove.type='button';remove.className='iconbtn del';remove.textContent='×';remove.title='Remove this time';remove.addEventListener('click',()=>row.remove());
+  row.append(input,remove);$('#itemTimes').append(row);input.focus();
+}
+function renderResults(items) {
+  const box=$('#results');
+  if (!items || !items.length) { box.className='results'; box.innerHTML=''; return; }
+  const blocks=items.map(x=>{
+    let head='', detail='';
+    if (x.status==='initialised') { head=`Shelf ${x.shelf}: starting weight saved`; detail='Current contents are now the starting inventory.'; }
+    else if (x.status==='unchanged') { head=`Shelf ${x.shelf}: no change`; detail='The shelf weight is unchanged.'; }
+    else if (x.autoApplied) { head=`Shelf ${x.shelf}: ${x.status==='removed'?'item removed':'item added'}`; detail=(x.changes||[]).map(c=>`${c.action==='removed'?'−':'+'} ${c.name} (${num(c.weight,1)} g)`).join(' · '); }
+    else if (x.status==='unknown') { head=`Shelf ${x.shelf}: weight changed by ${num(x.delta,1)} g`; detail='No matching item combination was found. Check the package weights, then accept the new shelf weight if correct.'; }
+    else { head=`Shelf ${x.shelf}: choose the matching change`; detail=`Weight change: ${num(x.delta,1)} g. Select the item(s) that explain it.`; }
+    let matches='';
+    if (!x.autoApplied && x.solutions?.length) matches=x.solutions.map((sol,i)=>`<div class="match"><span>${(sol.items||[]).map(a=>esc(a.name)).join(' + ')||'No item'} · ${num(sol.total,1)} g</span><button class="btn small soft" data-resolve-shelf="${x.shelf}" data-resolve="${i}">Confirm</button></div>`).join('');
+    if (!x.autoApplied && !['initialised','unchanged'].includes(x.status)) matches+=`<div class="match"><span>Keep item list unchanged</span><button class="btn small ghost" data-resolve-shelf="${x.shelf}" data-resolve="-1">Accept weight only</button></div>`;
+    return `<div style="margin-top:5px"><h3>${esc(head)}</h3><div class="resultline">${esc(detail)}</div>${matches}</div>`;
+  }).join('');
+  box.innerHTML=`<h3>Storage check</h3>${blocks}`;box.className='results show';
+}
+function render() {
+  if (!state) return;
+  const d=state.device||{}, serial=d.online;
+  $('#connection').className='connection '+(serial?'on':'off');
+  $('#connectionText').textContent=serial?`ESP32 connected${d.ageSec!=null?' · '+d.ageSec+'s ago':''}`:'ESP32 disconnected';
+  $('#offlineAlert').classList.toggle('show',!serial);
+  $('#shelves').innerHTML=renderShelf(1)+renderShelf(2);
+  $('#lastUpdated').textContent=serial?'Live readings · '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'}):'Waiting for ESP32';
+  renderEnvironment();renderReminders();renderCalibration();
+}
+async function poll() {
+  try { state=await api('/api/state');render(); }
+  catch(e){ $('#connection').className='connection off';$('#connectionText').textContent='Local app disconnected';$('#offlineAlert').classList.add('show'); }
+}
+async function reloadStorage(btn) {
+  if (busy) return; busy=true;
+  const buttons=[$('#reloadTop')];buttons.forEach(b=>b.disabled=true);
+  try { const result=await api('/api/storage/reload','POST',{}); renderResults(result.results||[]); await poll(); if (result.events?.length) toast(result.events.map(x=>`${x.action}: ${x.name}`).join(' · ')); else toast('Storage readings updated'); }
+  catch(e){ toast(e.message,true); }
+  finally { busy=false;buttons.forEach(b=>b.disabled=false); }
+}
+function openModal(item=null) {
+  editingId=item?item.id:null;
+  $('#modalTitle').textContent=item?'Edit item':'Add an item';
+  $('#itemName').value=item?.name||'';
+  $('#itemShelf').value=String(item?.shelf||1);
+  $('#itemWeight').value=item?.unitWeight??'';
+  $('#itemTimes').innerHTML='';
+  if(item) remindersFor(item.id).forEach(x=>addItemTimeRow(x.time));
+  $('#itemSave').textContent=item?'Save changes':'Add to storage';
+  $('#itemModal').classList.add('show');setTimeout(()=>$('#itemName').focus(),50);
+}
+function closeModal(){ $('#itemModal').classList.remove('show');$('#itemForm').reset();$('#itemTimes').innerHTML='';editingId=null; }
+function openReminderModal() {
+  if(!(state?.medicines||[]).length){toast('Add an item first, then add its ingestion time.',true);return;}
+  $('#reminderItem').innerHTML=state.medicines.map(m=>`<option value="${m.id}">${esc(m.name)} · Shelf ${m.shelf}</option>`).join('');
+  $('#reminderTime').value='';$('#reminderModal').classList.add('show');setTimeout(()=>$('#reminderItem').focus(),50);
+}
+function closeReminderModal(){ $('#reminderModal').classList.remove('show');$('#reminderForm').reset(); }
+$('#addOpen').onclick=()=>openModal();$('#modalClose').onclick=closeModal;$('#modalCancel').onclick=closeModal;$('#addItemTime').onclick=()=>addItemTimeRow();$('#addIngestion').onclick=openReminderModal;$('#reminderClose').onclick=closeReminderModal;$('#reminderCancel').onclick=closeReminderModal;
+$('#itemModal').addEventListener('click',e=>{if(e.target===$('#itemModal'))closeModal();});$('#reminderModal').addEventListener('click',e=>{if(e.target===$('#reminderModal'))closeReminderModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeReminderModal();}});
+$('#itemForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const times=[...$('#itemTimes').querySelectorAll('[data-item-time]')].map(x=>x.value).filter(Boolean);
+  const payload={name:$('#itemName').value.trim(),shelf:Number($('#itemShelf').value),weight:Number($('#itemWeight').value),times};
+  const btn=$('#itemSave');btn.disabled=true;
+  try {
+    if(editingId){await api('/api/items/'+editingId,'PUT',payload);toast('Item updated');}
+    else {await api('/api/items','POST',payload);toast('Item added');}
+    closeModal();await poll();
+    toast('Place it on Shelf '+payload.shelf+', then press Reload to register the storage change.');
+  } catch(err){toast(err.message,true);} finally{btn.disabled=false;}
+});
+$('#reminderForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const id=Number($('#reminderItem').value), time=$('#reminderTime').value;
+  if(!id||!time){toast('Choose an item and an ingestion time.',true);return;}
+  const btn=$('#reminderSave');btn.disabled=true;
+  try{
+    const existing=(state.schedule||[]).filter(x=>Number(x.medicineId)===id).map(x=>x.time);
+    await api('/api/items/'+id+'/reminders','POST',{times:[...existing,time]});
+    closeReminderModal();await poll();toast('Ingestion time added and synced to the OLED.');
+  }catch(err){toast(err.message,true);}finally{btn.disabled=false;}
+});
+$('#reloadTop').onclick=()=>reloadStorage($('#reloadTop'));
+
+document.addEventListener('click',async e=>{
+  const edit=e.target.closest('[data-edit]');
+  const del=e.target.closest('[data-delete]');
+  const tm=e.target.closest('[data-time]');
+  const taken=e.target.closest('[data-taken]');
+  const removeReminder=e.target.closest('[data-remove-reminder]');
+  const tare=e.target.closest('[data-tare]');
+  const cal=e.target.closest('[data-cal]');
+  const resolve=e.target.closest('[data-resolve]');
+  try {
+    if(edit){const item=state.medicines.find(x=>Number(x.id)===Number(edit.dataset.edit));if(item)openModal(item);}
+    else if(del){const id=del.dataset.delete;if(confirm('Remove this item from MedBox?')){await api('/api/medicines/'+id,'DELETE');toast('Item removed');await poll();}}
+    else if(tm){const item=state.medicines.find(x=>Number(x.id)===Number(tm.dataset.time));if(item)openModal(item);}
+    else if(taken){await api('/api/schedule/'+taken.dataset.taken+'/taken','POST',{});toast('Reminder marked as taken');await poll();}
+    else if(removeReminder){if(confirm('Remove this ingestion reminder?')){await api('/api/schedule/'+removeReminder.dataset.removeReminder,'DELETE');toast('Reminder removed');await poll();}}
+    else if(tare){const shelf=Number(tare.dataset.tare);await api('/api/admin/tare','POST',{shelf});toast('Tare command sent · keep the shelf empty and still');}
+    else if(cal){const shelf=Number(cal.dataset.cal),raw=$('#calWeight'+shelf).value.trim();if(!raw){toast('Enter the known weight in grams first.',true);return;}const grams=Number(raw);if(!Number.isFinite(grams)||grams<5){toast('Enter a valid known weight of at least 5 g.',true);return;}await api('/api/admin/calibrate','POST',{shelf,grams});toast('Calibration command sent · keep the known weight on the shelf');}
+    else if(resolve){const shelf=Number(resolve.dataset.resolveShelf),solution=Number(resolve.dataset.resolve);await api('/api/storage/resolve','POST',{shelf,solution});toast('Storage list updated');$('#results').className='results';await poll();}
+  } catch(err){toast(err.message,true);}
+});
+
+initCalibration();
+poll();
+pollTimer=setInterval(poll,2500);
+</script>
+</body>
+</html>
